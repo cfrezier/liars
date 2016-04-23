@@ -183,6 +183,7 @@
     Game.prototype.endLie = function () {
         var game = this;
         if (this.state == "lying") {
+            console.log("[Game" + game.code + "] Starting choosing answers");
             this.state = "answering";
 
             this.broadcast("display:answer", {
@@ -232,6 +233,7 @@
     Game.prototype.endAnswer = function () {
         var game = this;
         if (this.state == "answering") {
+            console.log("[Game" + game.code + "] Starting displaying results");
             this.state = "calculating";
             this.presenterSocket.emit("clear:message", {});
             this.resultMessages = [];
