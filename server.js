@@ -116,8 +116,7 @@
     function randomQuestions(nb) {
         var buffer = fs.readFileSync('./questions.json', "utf8");
         var possibleQuestions = JSON.parse(buffer);
-        var questionsSelected = possibleQuestions.shuffle().splice(0, nb);
-        return questionsSelected;
+        return possibleQuestions.shuffle().splice(0, nb);
     }
 
     function getGameByCode(code) {
