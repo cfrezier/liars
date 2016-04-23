@@ -28,6 +28,7 @@ var Player = (function () {
         });
 
         this.socket.on('display:answer', function (data) {
+            document.querySelector("#warningTruth").style.display = "none";
             var container = document.querySelector("#answerLieContainer");
             document.querySelector("#answerQuestionText").innerHTML = data.question.question;
             while (container.childElementCount > 0) {
@@ -49,8 +50,8 @@ var Player = (function () {
         });
 
         this.socket.on('lie:truth', function (data) {
-            alert("Changez de mensonge, vous avez trouvé la bonne réponse !");
-            ctxt.showPanel("answer");
+            document.querySelector("#warningTruth").style.display = "block";
+            ctxt.showPanel("lie");
         });
 
         this.socket.on('lie:ok', function (data) {
