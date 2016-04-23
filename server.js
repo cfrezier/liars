@@ -1,7 +1,14 @@
-(function (io, DISPLAY_TIMEOUT, ANSWER_TIMEOUT, SHORT_DISPLAY_TIMEOUT, HTTP_PORT, NUMBER_QUESTION) {
+(function (DISPLAY_TIMEOUT, ANSWER_TIMEOUT, SHORT_DISPLAY_TIMEOUT, HTTP_PORT, NUMBER_QUESTION) {
     var games = [];
     var players = [];
     var playerIdGenerator = 0;
+
+    try {
+        var io = require('socket.io').listen(8001);
+        console.log("WSServer lancé");
+    } catch (e) {
+        console.log("Problème WSServer" + e);
+    }
 
     io.sockets.on('connection', function (socket) {
         socket.on('iam:presenter', function (data) {
@@ -14,9 +21,13 @@
 
         socket.on('iam:player', function (data) {
             var game = getGameByCode(data.code);
-            game.createPlayer(data.name, socket);
-            game.presenterSocket.emit('display:player', {"name": data.name});
-            console.log("[Game" + game.code + "] New Player: " + data.name);
+            if (game == undefined) {
+                socket.emit('wrong:code');
+            } else {
+                game.createPlayer(data.name, socket);
+                game.presenterSocket.emit('display:player', {"name": data.name});
+                console.log("[Game" + game.code + "] New Player: " + data.name);
+            }
         });
 
         socket.on('start', function (data) {
@@ -47,16 +58,14 @@
         });
     });
 
-    var express = require('express'),
-        app = express(),
-        port = HTTP_PORT;
+    var express = require('express'), app = express();
 
     try {
         app.use(express.static(__dirname + '/client'));
         app.get('/', function (req, res) {
             res.sendfile(__dirname + '/client/index.html');
         });
-        app.listen(port);
+        app.listen(HTTP_PORT);
         console.log("Ready & listening to requests. Ctrl-C to stop.")
     } catch (e) {
         console.log("Error in server: " + e);
@@ -90,13 +99,19 @@
     Game.prototype.generateCode = function () {
         var valid = false;
         while (!valid) {
-            var candidate = Math.random().toString(36).replace(/[a-z]/g, '').substr(0, 5);
+            var candidate = randomString(5, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
             valid = games.filter(function (game) {
                     return game.code === candidate;
                 }).length === 0;
         }
         return candidate;
     };
+
+    function randomString(length, chars) {
+        var result = '';
+        for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        return result;
+    }
 
     Game.prototype.createPlayer = function (name, socket) {
         var player = new Player(name, socket, this);
@@ -264,4 +279,4 @@
         return this;
     }
 
-})(require('socket.io').listen(8001), 5000, 30000, 1000, 8000, 7);
+})(5000, 30000, 1000, 8000, 7);

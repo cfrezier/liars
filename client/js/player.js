@@ -17,6 +17,10 @@ var Player = (function () {
             player.id = data.id;
         });
 
+        this.socket.on('wrong:code', function (data) {
+            alert("mauvais code entré");
+        });
+
         this.socket.on('display:lie', function (data) {
             document.querySelector("#questionText").innerHTML = data.question;
             ctxt.showPanel("lie");

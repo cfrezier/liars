@@ -23,6 +23,7 @@ var Presenter = (function () {
 
         this.socket.on('display:lie', function (data) {
             document.querySelector("#questionText").innerHTML = data.question;
+            document.querySelector("lieResponse").style.display = 'none';
             ctxt.showPanel("lie");
         });
 
@@ -38,7 +39,7 @@ var Presenter = (function () {
             ctxt.showPanel("answer");
         });
 
-        this.socket.('clear:message', function () {
+        this.socket.on('clear:message', function () {
             var container = document.querySelector("#messageContainer");
             while (container.childElementCount > 0) {
                 container.removeChild(container.firstElementChild);

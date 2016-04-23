@@ -1,38 +1,53 @@
-(function(Presenter, Player) {
+var __prep = (function (Presenter, Player, PORT) {
 
     function PrepareGame() {
         var socket = null;
         var executor = null;
 
         return {
-            connect: function() {
+            connect: function () {
                 socket = io.connect("http://localhost:" + PORT);
             },
-            iAm: function(what) {
-                if(what === 'presenter') {
+            iAm: function (what) {
+                if (what === 'presenter') {
                     executor = new Presenter(socket);
                 } else {
-                    executor = new Player(socket, document.querySelector("#name"), document.querySelector("#code"));
+                    executor = new Player(socket, document.querySelector("#name").value, document.querySelector("#code").value);
                 }
                 executor.execute(this);
             },
-            showPanel: function(type) {
+            showPanel: function (type) {
                 var allPanels = ["#startPanel", "#liePanel", "#answerPanel", "#resultPanel", "#codePanel"];
-                allPanels.forEach(function(panel) {
+                allPanels.forEach(function (panel) {
                     document.querySelector(panel).style.display = "none";
                 });
                 document.querySelector("#" + type + "Panel").style.display = "block";
             },
-            lie: function() {
+            lie: function () {
                 executor.lie();
             },
-            start: function() {
+            start: function () {
                 executor.start();
             }
         }
     }
 
-    var prep = new PrepareGame();
-    document.observe("dom:loaded", prep.connect());
+    return new PrepareGame();
 
-})(Presenter, Player);
+})(Presenter, Player, 8001);
+
+function load() {
+    __prep.connect();
+}
+
+function iAm(what) {
+    __prep.iAm(what);
+}
+
+function lie() {
+    __prep.lie();
+}
+
+function start() {
+    __prep.start();
+}
