@@ -253,7 +253,7 @@
             this.resultMessages.push({msg: "Etait la VERITE", time: SHORT_DISPLAY_TIMEOUT});
             var haveFoundTruth = "";
             this.players.forEach(function (player, idx, arr) {
-                if (player.answer === game.questions[0].truth) {
+                if (player.actualAnswer === game.questions[0].truth.toUpperCase()) {
                     player.score += points * 2;
                     haveFoundTruth += player.name + " ";
                 }
@@ -276,8 +276,10 @@
                 game.displayNextMessage();
             }, DISPLAY_TIMEOUT);
         } else {
+            console.log(JSON.stringify(game.getScoreTab()));
             this.presenterSocket.emit("display:score", {question: this.questions[0].question, scoreTab: game.getScoreTab()});
             setTimeout(function () {
+                console.log("[Game" + this.code + "] Next Question !");
                 game.questions.shift();
                 game.start();
             }, DISPLAY_TIMEOUT);
@@ -285,7 +287,9 @@
     };
 
     Game.prototype.getScoreTab = function () {
-        return this.players.sort(function (a, b) {
+        return this.players.map(function (player) {
+            return {name: player.name, score: player.score}
+        }).sort(function (a, b) {
             return a.score - b.score;
         });
     };
