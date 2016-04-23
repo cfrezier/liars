@@ -136,7 +136,7 @@
         var player = new Player(name, socket, this);
         this.players.push(player);
         players.push(player);
-        socket.emit('identify', { id : this.id });
+        socket.emit('identify', {"id": player.id});
     };
 
     Game.prototype.getPlayerByName = function (name) {
@@ -175,7 +175,7 @@
                 question: this.questions[0],
                 lies: this.players.map(function (player) {
                     return player.actualLie;
-                }).concat(this.questions[0].truth).shuffle()
+                }).concat(this.questions[0].truth.toUpperCase()).shuffle()
             });
 
             setTimeout(function () {
@@ -248,8 +248,11 @@
                     haveFoundTruth += player.name + " ";
                 }
             });
-            this.resultMessages.push({msg: "qui a été trouvée par " + haveFoundTruth, time: SHORT_DISPLAY_TIMEOUT});
-
+            if (haveFoundTruth > 0) {
+                this.resultMessages.push({msg: "qui a été trouvée par " + haveFoundTruth, time: SHORT_DISPLAY_TIMEOUT});
+            } else {
+                this.resultMessages.push({msg: "qui n'a été trouvée par PERSONNE !", time: SHORT_DISPLAY_TIMEOUT});
+            }
             game.displayNextMessage();
         }
     };

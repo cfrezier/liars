@@ -17,7 +17,10 @@ var Presenter = (function () {
 
         this.socket.on('display:player', function (data) {
             var container = document.querySelector("#playersContainer");
-            container.appendChild(document.createTextNode(data.name));
+            var text = document.createTextNode(data.name);
+            var p = document.createElement("P");
+            p.appendChild(text);
+            container.appendChild(p);
             ctxt.showPanel("code");
         });
 
@@ -49,7 +52,10 @@ var Presenter = (function () {
         this.socket.on('display:message', function (data) {
             var container = document.querySelector("#messageContainer");
             document.querySelector("#codeResultText").innerHTML = data.question;
-            container.appendChild(document.createTextNode(data.msg.msg));
+            var text = document.createTextNode(data.msg.msg);
+            var p = document.createElement("P");
+            p.appendChild(text);
+            container.appendChild(p);
             ctxt.showPanel("result");
         });
 
