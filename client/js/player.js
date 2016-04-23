@@ -43,6 +43,7 @@ var Player = (function () {
                     btn.appendChild(document.createTextNode(lie));
                     btn.addEventListener("click", function () {
                         player.socket.emit('play:answer', {"id": player.id, "answer": lie});
+                        ctxt.showPanel("wait");
                     });
                     container.appendChild(btn);
                 });

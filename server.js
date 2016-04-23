@@ -50,6 +50,7 @@
                     console.log("[Game" + player.game.code + "] Player found truth !");
                 } else {
                     player.actualLie = data.lie.toUpperCase();
+                    player.socket.emit('lie:ok');
                     console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
 
                     if (player.game.allLiesEntered()) {
