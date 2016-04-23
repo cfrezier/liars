@@ -74,8 +74,8 @@
                 console.log("[Game" + player.game.code + "] Player " + player.name + " answered [" + player.actualAnswer + "]");
 
                 if (player.game.allAnswersEntered()) {
-                    player.game.endAnswer();
                     console.log("[Game" + player.game.code + "] All players Answered !");
+                    player.game.endAnswer();
                 }
             } else {
                 console.log("Wrong answerer " + JSON.stringify(data));
