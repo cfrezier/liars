@@ -132,7 +132,7 @@
     Game.prototype.generateCode = function () {
         var valid = false;
         while (!valid) {
-            var candidate = randomString(5, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            var candidate = randomString(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
             valid = games.filter(function (game) {
                     return game.code === candidate;
                 }).length === 0;
@@ -187,9 +187,14 @@
 
             this.broadcast("display:answer", {
                 question: this.questions[0],
-                lies: this.players.map(function (player) {
-                    return player.actualLie;
-                }).concat(this.questions[0].truth.toUpperCase()).unique().completeWith(this.questions[0].lies, 4).shuffle()
+                lies: this.players
+                    .map(function (player) {
+                        return player.actualLie;
+                    })
+                    .concat(this.questions[0].truth.toUpperCase())
+                    .unique()
+                    .completeWith(this.questions[0].lies, this.players.length + 1 > 4 ? this.players.length + 1 : 4)
+                    .shuffle()
             });
 
             setTimeout(function () {
