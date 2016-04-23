@@ -17,7 +17,7 @@
                 executor.execute(this);
             },
             showPanel: function(type) {
-                var allPanels = ["#startPanel", "#liePanel", "#answerPanel", "#resultPanel"];
+                var allPanels = ["#startPanel", "#liePanel", "#answerPanel", "#resultPanel", "#codePanel"];
                 allPanels.forEach(function(panel) {
                     document.querySelector(panel).style.display = "none";
                 });

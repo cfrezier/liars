@@ -1,10 +1,10 @@
-var Presenter = (function() {
-    var Presenter = function(socket) {
+var Presenter = (function () {
+    var Presenter = function (socket) {
         this.socket = socket;
         this.code = null;
     };
 
-    Presenter.prototype.execute = function(ctxt) {
+    Presenter.prototype.execute = function (ctxt) {
         var presenter = this;
 
         this.socket.emit('iam:presenter');
@@ -32,13 +32,30 @@ var Presenter = (function() {
             while (container.childElementCount > 0) {
                 container.removeChild(container.firstElementChild);
             }
+            data.lies.forEach(function (lie) {
+                container.appendChild(document.createTextNode(lie))
+            });
             ctxt.showPanel("answer");
+        });
+
+        this.socket.('clear:message', function () {
+            var container = document.querySelector("#messageContainer");
+            while (container.childElementCount > 0) {
+                container.removeChild(container.firstElementChild);
+            }
+        });
+
+        this.socket.on('display:message', function (data) {
+            var container = document.querySelector("#messageContainer");
+            document.querySelector("#codeResultText").innerHTML = data.question;
+            container.appendChild(document.createTextNode(data.msg.msg));
+            ctxt.showPanel("result");
         });
 
     };
 
-    Presenter.prototype.start = function()  {
-        this.socket.emit('start', { code : this.code });
+    Presenter.prototype.start = function () {
+        this.socket.emit('start', {code: this.code});
     };
 
     return Presenter;
