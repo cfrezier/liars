@@ -28,14 +28,19 @@ var Player = (function () {
             while (container.childElementCount > 0) {
                 container.removeChild(container.firstElementChild);
             }
-            data.lies.forEach(function (lie) {
-                var btn = document.createElement("BUTTON");
-                btn.appendChild(document.createTextNode(lie));
-                btn.addEventListener("click", function () {
-                    player.socket.emit('play:answer', {"id": this.id, "answer": lie});
+            data.lies
+                .filter(function (lie) {
+                    return lie.id != player.id;
+                })
+                .forEach(function (lie) {
+                    var btn = document.createElement("BUTTON");
+                    btn.appendChild(document.createTextNode(lie.text));
+                    btn.addEventListener("click", function () {
+                        player.socket.emit('play:answer', {"id": this.id, "answer": lie.text});
+                        this.ctxt.showPanel("wait");
+                    });
+                    container.appendChild(btn);
                 });
-                container.appendChild(btn);
-            });
             ctxt.showPanel("answer");
         });
     };
