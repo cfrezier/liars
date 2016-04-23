@@ -32,7 +32,7 @@
                     player.socket = socket;
                 } else {
                     game.createPlayer(data.name, socket);
-                    game.presenterSocket.emit('display:player', {"name": data.name});
+                    game.presenterSocket.emit('display:player', {"name": data.name, "id" : getPlayerBySocket(socket).id });
                     console.log("[Game" + game.code + "] New Player: " + data.name);
                 }
             }

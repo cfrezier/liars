@@ -9,6 +9,8 @@ var Presenter = (function () {
         this.lieResponse = document.querySelector("#lieResponse");
         this.answerLieContainer = document.querySelector("#answerLieContainer");
         this.answerQuestionContainer = document.querySelector("#answerQuestionText");
+
+        this.audioPlayer = new AudioPlayer();
     };
 
     Presenter.prototype.execute = function (ctxt) {
@@ -17,12 +19,14 @@ var Presenter = (function () {
         this.socket.emit('iam:presenter');
 
         this.socket.on('display:code', function (data) {
+            presenter.audioPlayer.song();
             presenter.code = data;
             document.querySelector("#codeText").innerHTML = data;
             ctxt.showPanel("code");
         });
 
         this.socket.on('display:player', function (data) {
+            presenter.audioPlayer.player(data.id);
             presenter.playerContainer.appendChild(addElementText(data.name));
             ctxt.showPanel("code");
         });
@@ -53,9 +57,10 @@ var Presenter = (function () {
         });
 
         this.socket.on('display:score', function (data) {
+            presenter.audioPlayer.result();
             presenter.clearMsg();
             presenter.displayQuestion(data);
-            data.scoreTab.forEach(function(score) {
+            data.scoreTab.forEach(function (score) {
                 presenter.addMsg("" + score.name + " : " + score.score);
             });
             ctxt.showPanel("result");
@@ -63,6 +68,7 @@ var Presenter = (function () {
 
 
         this.socket.on('end', function (data) {
+            presenter.audioPlayer.end();
             ctxt.showPanel("code");
         });
 
@@ -105,6 +111,44 @@ var Presenter = (function () {
         data.lies.forEach(function (lie) {
             presenter.answerLieContainer.appendChild(addElementText(lie));
         });
+    };
+
+    function AudioPlayer() {
+        this.sounds = [
+            document.querySelector("#endgame"),
+            document.querySelector("#song"),
+            document.querySelector("#result"),
+            document.querySelector("#player1"),
+            document.querySelector("#player2"),
+            document.querySelector("#player3"),
+            document.querySelector("#player4"),
+            document.querySelector("#player5"),
+            document.querySelector("#player6"),
+            document.querySelector("#player7"),
+            document.querySelector("#player8"),
+            document.querySelector("#player9")
+        ];
+        this.sounds.forEach(function (sound) {
+            sound.load();
+        });
+        this.playerSound = [];
+    }
+
+    AudioPlayer.prototype.end = function () {
+        this.sounds[0].play();
+    };
+    AudioPlayer.prototype.song = function () {
+        this.sounds[1].play();
+    };
+    AudioPlayer.prototype.result = function () {
+        this.sounds[2].play();
+    };
+    AudioPlayer.prototype.player = function (id) {
+        if (this.playerSound.indexOf(id) == -1) {
+            /* pas de son attribué */
+            this.playerSound.push(id);
+        }
+        this.sounds[3 + this.playerSound.indexOf(id)].play();
     };
 
     return Presenter;
