@@ -101,6 +101,7 @@
                 game.endLie();
             }, ANSWER_TIMEOUT);
         } else {
+            this.end = Date.now();
             this.broadcast('end');
         }
     };

@@ -52,6 +52,10 @@ var Presenter = (function () {
             ctxt.showPanel("result");
         });
 
+        this.socket.on('end', function (data) {
+            ctxt.showPanel("start");
+        });
+
     };
 
     Presenter.prototype.start = function () {
