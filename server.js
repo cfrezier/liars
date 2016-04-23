@@ -188,6 +188,9 @@
             this.broadcast("display:answer", {
                 question: this.questions[0],
                 lies: this.players
+                    .filter(function (player) {
+                        return player.actualLie != undefined && player.actualLie != null;
+                    })
                     .map(function (player) {
                         return player.actualLie;
                     })
@@ -245,7 +248,7 @@
             game.questions[0].lies.forEach(function (lie) {
                 var liedWorkedOn = "";
                 game.players.forEach(function (player, idx, arr) {
-                    if (lie === player.actualAnswer) {
+                    if (lie.toUpperCase() === player.actualAnswer) {
                         liedWorkedOn += player.name + " ";
                         player.score -= points;
                     }
