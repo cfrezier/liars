@@ -241,6 +241,22 @@
                 points = 1500;
             }
 
+            /* L'ordi a menti */
+            game.questions[0].lies.forEach(function (lie) {
+                var liedWorkedOn = "";
+                game.players.forEach(function (player, idx, arr) {
+                    if (lie === player.actualAnswer) {
+                        liedWorkedOn += player.name + " ";
+                        player.score -= points;
+                    }
+                });
+                if (liedWorkedOn.length > 0) {
+                    game.resultMessages.push({msg: "La réponse " + lie, time: SHORT_DISPLAY_TIMEOUT});
+                    game.resultMessages.push({msg: "Etait un MENSONGE de la MATRICE !!!", time: SHORT_DISPLAY_TIMEOUT * 2});
+                    game.resultMessages.push({msg: "qui a trompé " + liedWorkedOn, time: SHORT_DISPLAY_TIMEOUT * 2});
+                }
+            });
+
             /* A menti */
             this.players.forEach(function (player, idx, arr) {
                 var liedTo = "";
