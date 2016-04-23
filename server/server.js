@@ -1,4 +1,4 @@
-(function (io, DISPLAY_TIMEOUT, ANSWER_TIMEOUT, SHORT_DISPLAY_TIMEOUT, HTTP_PORT) {
+(function (io, DISPLAY_TIMEOUT, ANSWER_TIMEOUT, SHORT_DISPLAY_TIMEOUT, HTTP_PORT, NUMBER_QUESTION) {
     var games = [];
     var players = [];
     var playerIdGenerator = 0;
@@ -9,33 +9,40 @@
             games.push(game);
 
             game.presenterSocket.emit('display:code', game.code);
+            console.log("New Game: Presenter: " + game.code);
         });
 
         socket.on('iam:player', function (data) {
             var game = getGameByCode(data.code);
             game.createPlayer(data.name, socket);
             game.presenterSocket.emit('display:player', {"name": data.name});
+            console.log("[Game" + game.code + "] New Player: " + data.name);
         });
 
         socket.on('start', function (data) {
-            getGameByCode(data.code).start();
+            var game = getGameByCode(data.code).start();
+            console.log("[Game" + game.code + "] Game Start !");
         });
 
         socket.on('play:lie', function (data) {
             var player = getPlayerById(data.id);
             player.actualLie = data.lie.toUpperCase();
+            console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
 
             if (player.game.allLiesEntered()) {
                 player.game.endLie();
+                console.log("[Game" + player.game.code + "] All players lied !");
             }
         });
 
         socket.on('play:answer', function (data) {
             var player = getPlayerById(data.id);
             player.actualAnswer = data.answer.toUpperCase();
+            console.log("[Game" + player.game.code + "] Player " + player.name + " answered [" + player.actualAnswer + "]");
 
             if (player.game.allAnswersEntered()) {
                 player.game.endAnswer();
+                console.log("[Game" + player.game.code + "] All players Answered !");
             }
         });
     });
@@ -50,7 +57,7 @@
             res.sendfile(__dirname + '/client/index.html');
         });
         app.listen(port);
-        console.log("Ready & listening to requests.")
+        console.log("Ready & listening to requests. Ctrl-C to stop.")
     } catch (e) {
         console.log("Error in server: " + e);
     }
@@ -59,7 +66,11 @@
         this.code = this.generateCode();
         this.presenterSocket = socket;
         this.players = [];
-        this.questions = [
+        this.questions = randomQuestions(NUMBER_QUESTION);
+    }
+
+    function randomQuestions(nb) {
+        return [
             {question: "Ceci est une 1ere phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
             {question: "Ceci est une 2eme phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
             {question: "Ceci est une 3eme phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
@@ -101,14 +112,17 @@
         });
         var game = this;
         if (this.questions.length > 0) {
+            console.log("[Game" + this.code + "] Question n°" + ( NUMBER_QUESTION - this.questions.length) + "started");
             this.broadcast('display:lie', this.questions[0]);
             setTimeout(function () {
                 game.endLie();
             }, ANSWER_TIMEOUT);
         } else {
+            console.log("[Game" + this.code + "] Game terminated !");
             this.end = Date.now();
             this.broadcast('end');
         }
+        return this;
     };
 
     Game.prototype.endLie = function () {
@@ -160,14 +174,11 @@
             this.resultMessages = [];
 
             var points = 500;
-            switch (this.questions.length) {
-                case 3:
-                case 2:
-                    points = 1000;
-                    break;
-                case 1:
-                    points = 1500;
-                    break;
+            if ((NUMBER_QUESTION / 2) > this.questions.length) {
+                points = 1000;
+            }
+            if (this.questions.length == 1) {
+                points = 1500;
             }
 
             /* A menti */
@@ -253,4 +264,4 @@
         return this;
     }
 
-})(require('socket.io').listen(8001), 5000, 30000, 1000, 8000);
+})(require('socket.io').listen(8001), 5000, 30000, 1000, 8000, 7);
