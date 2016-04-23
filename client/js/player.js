@@ -41,8 +41,7 @@ var Player = (function () {
                     var btn = document.createElement("BUTTON");
                     btn.appendChild(document.createTextNode(lie));
                     btn.addEventListener("click", function () {
-                        player.socket.emit('play:answer', {"id": this.id, "answer": lie});
-                        this.ctxt.showPanel("wait");
+                        player.socket.emit('play:answer', {"id": player.id, "answer": lie});
                     });
                     container.appendChild(btn);
                 });
@@ -52,6 +51,10 @@ var Player = (function () {
         this.socket.on('lie:truth', function (data) {
             alert("Changez de mensonge, vous avez trouvé la bonne réponse !");
             ctxt.showPanel("answer");
+        });
+
+        this.socket.on('lie:ok', function (data) {
+            ctxt.showPanel("wait");
         });
     };
 

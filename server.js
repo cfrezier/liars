@@ -64,12 +64,16 @@
 
         socket.on('play:answer', function (data) {
             var player = getPlayerById(data.id);
-            player.actualAnswer = data.answer.toUpperCase();
-            console.log("[Game" + player.game.code + "] Player " + player.name + " answered [" + player.actualAnswer + "]");
+            if (player != undefined) {
+                player.actualAnswer = data.answer.toUpperCase();
+                console.log("[Game" + player.game.code + "] Player " + player.name + " answered [" + player.actualAnswer + "]");
 
-            if (player.game.allAnswersEntered()) {
-                player.game.endAnswer();
-                console.log("[Game" + player.game.code + "] All players Answered !");
+                if (player.game.allAnswersEntered()) {
+                    player.game.endAnswer();
+                    console.log("[Game" + player.game.code + "] All players Answered !");
+                }
+            } else {
+                console.log("Wrong answerer " + JSON.stringify(data));
             }
         });
 
