@@ -1,4 +1,4 @@
-(function (io, DISPLAY_TIMEOUT, ANSWER_TIMEOUT, SHORT_DISPLAY_TIMEOUT) {
+(function (io, DISPLAY_TIMEOUT, ANSWER_TIMEOUT, SHORT_DISPLAY_TIMEOUT, HTTP_PORT) {
     var games = [];
     var players = [];
     var playerIdGenerator = 0;
@@ -39,6 +39,16 @@
             }
         });
     });
+
+    var express = require('express'),
+        app = express(),
+        port = HTTP_PORT;
+
+    app.use(express.static(__dirname + '/client'));
+    app.get('/', function(req, res){
+        res.sendfile(__dirname + '/client/index.html');
+    });
+    app.listen(port);
 
     function Game(socket) {
         this.code = this.generateCode();
@@ -237,4 +247,4 @@
         return this;
     }
 
-})(require('socket.io').listen(8000), 5000, 30000, 1000);
+})(require('socket.io').listen(8000), 5000, 30000, 1000, 80);
