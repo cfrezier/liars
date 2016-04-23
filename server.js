@@ -169,7 +169,7 @@
         if (this.questions.length > 0) {
             console.log("[Game" + this.code + "] Question n°" + ( NUMBER_QUESTION - this.questions.length) + " started");
             this.broadcast('display:lie', this.questions[0]);
-            setTimeout(function () {
+            this.endLieTimeout = setTimeout(function () {
                 game.endLie();
             }, ANSWER_TIMEOUT);
         } else {
@@ -182,6 +182,7 @@
 
     Game.prototype.endLie = function () {
         var game = this;
+        clearTimeout(this.endLieTimeout);
         if (this.state == "lying") {
             console.log("[Game" + game.code + "] Starting choosing answers");
             this.state = "answering";
@@ -201,7 +202,7 @@
                     .shuffle()
             });
 
-            setTimeout(function () {
+            this.endAnswerTimeout = setTimeout(function () {
                 game.endAnswer();
             }, ANSWER_TIMEOUT);
         }
@@ -232,6 +233,7 @@
 
     Game.prototype.endAnswer = function () {
         var game = this;
+        clearTimeout(this.endAnswerTimeout);
         if (this.state == "answering") {
             console.log("[Game" + game.code + "] Starting displaying results");
             this.state = "calculating";
