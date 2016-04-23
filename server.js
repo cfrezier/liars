@@ -53,6 +53,7 @@
                 } else {
                     player.actualLie = data.lie.toUpperCase().trim();
                     player.socket.emit('lie:ok');
+                    player.game.presenterSocket.emit('song:player', player.id);
                     console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
 
                     player.game.presenterSocket.emit('player:lied', player.name);
@@ -72,6 +73,7 @@
             if (player != undefined) {
                 player.actualAnswer = data.answer.toUpperCase().trim();
                 console.log("[Game" + player.game.code + "] Player " + player.name + " answered [" + player.actualAnswer + "]");
+                player.game.presenterSocket.emit('song:player', player.id);
 
                 if (player.game.allAnswersEntered()) {
                     console.log("[Game" + player.game.code + "] All players Answered !");
@@ -291,6 +293,7 @@
             } else {
                 this.resultMessages.push({msg: "qui n'a été trouvée par PERSONNE !", time: SHORT_DISPLAY_TIMEOUT});
             }
+            game.presenterSocket.emit('song:result');
             game.displayNextMessage();
         }
     };

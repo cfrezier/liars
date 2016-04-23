@@ -46,6 +46,14 @@ var Presenter = (function () {
             presenter.clearMsg();
         });
 
+        this.socket.on('song:result', function() {
+            presenter.audioPlayer.end();
+        });
+
+        this.socket.on('song:player', function(id) {
+            presenter.audioPlayer.player(id);
+        });
+
         this.socket.on('display:message', function (data) {
             presenter.displayQuestion(data);
             presenter.addMsg(data.msg.msg);
@@ -68,7 +76,7 @@ var Presenter = (function () {
 
 
         this.socket.on('end', function (data) {
-            presenter.audioPlayer.end();
+            presenter.audioPlayer.song();
             ctxt.showPanel("code");
         });
 
@@ -126,7 +134,8 @@ var Presenter = (function () {
             document.querySelector("#player6"),
             document.querySelector("#player7"),
             document.querySelector("#player8"),
-            document.querySelector("#player9")
+            document.querySelector("#player9"),
+            document.querySelector("#player10")
         ];
         this.sounds.forEach(function (sound) {
             sound.load();
