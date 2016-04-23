@@ -45,11 +45,11 @@
         socket.on('play:lie', function (data) {
             var player = getPlayerById(data.id);
             if (player != undefined) {
-                if (data.lie === player.game.questions[0].truth) {
+                if (data.lie.trim() === player.game.questions[0].truth) {
                     socket.emit('lie:truth');
                     console.log("[Game" + player.game.code + "] Player found truth !");
                 } else {
-                    player.actualLie = data.lie.toUpperCase();
+                    player.actualLie = data.lie.toUpperCase().trim();
                     player.socket.emit('lie:ok');
                     console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
 
@@ -66,7 +66,7 @@
         socket.on('play:answer', function (data) {
             var player = getPlayerById(data.id);
             if (player != undefined) {
-                player.actualAnswer = data.answer.toUpperCase();
+                player.actualAnswer = data.answer.toUpperCase().trim();
                 console.log("[Game" + player.game.code + "] Player " + player.name + " answered [" + player.actualAnswer + "]");
 
                 if (player.game.allAnswersEntered()) {
@@ -158,12 +158,12 @@
     Game.prototype.start = function () {
         this.state = "lying";
         this.players.forEach(function (player) {
-            player.actualLie = null;
-            player.actualAnswer = null;
+            player.actualLie = undefined;
+            player.actualAnswer = undefined;
         });
         var game = this;
         if (this.questions.length > 0) {
-            console.log("[Game" + this.code + "] Question n°" + ( NUMBER_QUESTION - this.questions.length) + "started");
+            console.log("[Game" + this.code + "] Question n° " + ( NUMBER_QUESTION - this.questions.length) + "started");
             this.broadcast('display:lie', this.questions[0]);
             setTimeout(function () {
                 game.endLie();
@@ -258,7 +258,7 @@
                     haveFoundTruth += player.name + " ";
                 }
             });
-            if (haveFoundTruth > 0) {
+            if (haveFoundTruth.length > 0) {
                 this.resultMessages.push({msg: "qui a été trouvée par " + haveFoundTruth, time: SHORT_DISPLAY_TIMEOUT});
             } else {
                 this.resultMessages.push({msg: "qui n'a été trouvée par PERSONNE !", time: SHORT_DISPLAY_TIMEOUT});
@@ -276,10 +276,9 @@
                 game.displayNextMessage();
             }, DISPLAY_TIMEOUT);
         } else {
-            console.log(JSON.stringify(game.getScoreTab()));
             this.presenterSocket.emit("display:score", {question: this.questions[0].question, scoreTab: game.getScoreTab()});
             setTimeout(function () {
-                console.log("[Game" + this.code + "] Next Question !");
+                console.log("[Game" + game.code + "] Next Question !");
                 game.questions.shift();
                 game.start();
             }, DISPLAY_TIMEOUT);

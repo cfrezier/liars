@@ -24,6 +24,7 @@ var Player = (function () {
 
         this.socket.on('display:lie', function (data) {
             document.querySelector("#questionText").innerHTML = data.question;
+            document.querySelector("#lie").value = "";
             ctxt.showPanel("lie");
         });
 

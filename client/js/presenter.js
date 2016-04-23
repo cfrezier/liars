@@ -2,6 +2,13 @@ var Presenter = (function () {
     var Presenter = function (socket) {
         this.socket = socket;
         this.code = null;
+        this.msgContainer = document.querySelector("#messageContainer");
+        this.questionContainer = document.querySelector("#codeResultText");
+        this.playerContainer = document.querySelector("#playersContainer");
+        this.questionLieContainer = document.querySelector("#questionText");
+        this.lieResponse = document.querySelector("#lieResponse");
+        this.answerLieContainer = document.querySelector("#answerLieContainer");
+        this.answerQuestionContainer = document.querySelector("#answerQuestionText");
     };
 
     Presenter.prototype.execute = function (ctxt) {
@@ -16,51 +23,37 @@ var Presenter = (function () {
         });
 
         this.socket.on('display:player', function (data) {
-            var container = document.querySelector("#playersContainer");
-            var text = document.createTextNode(data.name);
-            var p = document.createElement("P");
-            p.appendChild(text);
-            container.appendChild(p);
+            presenter.playerContainer.appendChild(addElementText(data.name));
             ctxt.showPanel("code");
         });
 
         this.socket.on('display:lie', function (data) {
-            document.querySelector("#questionText").innerHTML = data.question;
-            document.querySelector("#lieResponse").style.display = 'none';
+            presenter.questionLieContainer.innerHTML = data.question;
+            presenter.lieResponse.style.display = 'none';
             ctxt.showPanel("lie");
         });
 
         this.socket.on('display:answer', function (data) {
-            var container = document.querySelector("#answerLieContainer");
-            document.querySelector("#answerQuestionText").innerHTML = data.question.question;
-            while (container.childElementCount > 0) {
-                container.removeChild(container.firstElementChild);
-            }
-            data.lies.forEach(function (lie) {
-                var text = document.createTextNode(lie);
-                var p = document.createElement("P");
-                p.appendChild(text);
-                container.appendChild(p);
-            });
+            presenter.displayAnswer(data);
             ctxt.showPanel("answer");
         });
 
         this.socket.on('clear:message', function () {
-            var container = document.querySelector("#messageContainer");
-            while (container.childElementCount > 0) {
-                container.removeChild(container.firstElementChild);
-            }
+            presenter.clearMsg();
         });
 
         this.socket.on('display:message', function (data) {
-            var container = document.querySelector("#messageContainer");
-            document.querySelector("#codeResultText").innerHTML = data.question;
-            var text = document.createTextNode(data.msg.msg);
-            var p = document.createElement("P");
-            p.appendChild(text);
-            container.appendChild(p);
+            presenter.displayQuestion(data);
             ctxt.showPanel("result");
         });
+
+        this.socket.on('display:score', function (data) {
+            presenter.clearMsg();
+            presenter.displayQuestion(data);
+            presenter.addMsg(data.msg.msg);
+            ctxt.showPanel("result");
+        });
+
 
         this.socket.on('end', function (data) {
             ctxt.showPanel("start");
@@ -70,6 +63,41 @@ var Presenter = (function () {
 
     Presenter.prototype.start = function () {
         this.socket.emit('start', {code: this.code});
+    };
+
+    Presenter.prototype.clearMsg = function () {
+        while (this.msgContainer.childElementCount > 0) {
+            this.msgContainer.removeChild(this.msgContainer.firstElementChild);
+        }
+    };
+
+    Presenter.prototype.displayQuestion = function (data) {
+        this.questionContainer.innerHTML = data.question;
+    };
+
+    Presenter.prototype.addMsg = function (msg) {
+        var text = document.createTextNode(msg);
+        var p = document.createElement("P");
+        p.appendChild(text);
+        this.msgContainer.appendChild(p);
+    };
+
+    function addElementText(msg) {
+        var text = document.createTextNode(msg);
+        var p = document.createElement("P");
+        p.appendChild(text);
+        return p;
+    }
+
+    Presenter.prototype.displayAnswer = function (data) {
+        var presenter = this;
+        this.answerQuestionContainer.innerHTML = data.question.question;
+        while (this.answerLieContainer.childElementCount > 0) {
+            this.answerLieContainer.removeChild(this.answerLieContainer.firstElementChild);
+        }
+        data.lies.forEach(function (lie) {
+            presenter.answerLieContainer.appendChild(addElementText(lie));
+        });
     };
 
     return Presenter;
