@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+    <meta charset='utf-8'>
+    <title>Liars !</title>
+
+    <script src="http://localhost:8000/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="./client/player.js"></script>
+    <script type="text/javascript" src="./client/presenter.js"></script>
+    <script type="text/javascript" src="./client/client.js"></script>
+
+    <style type="text/css">
+
+    </style>
+</head>
+
+<body>
+
+<div id="startPanel">
+    <label for="name">Nom:</label><input id="name" value="" >
+    <label for="code">Code d'accès:</label><input id="code" value="" >
+    <button onclick="iAm('player')">Jouer !</button>
+    <button onclick="iAm('presenter')">Device de présentation</button>
+</div>
+
+<div id="liePanel" style="display:none">
+    <h1 id="questionText"></h1>
+    <label for="lie">Entrez votre mensonge:</label><input id="lie" value="">
+    <button onclick="lie()">Jouer !</button>
+</div>
+
+<div id="answerPanel" style="display:none">
+    <h1 id="answerQuestionText"></h1>
+    <div id="answerLieContainer"></div>
+</div>
+
+<div id="waitPanel" style="display:none">
+    <h1>Regardez la présentation</h1>
+</div>
+
+</body>
+
+</html>
