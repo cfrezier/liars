@@ -44,13 +44,16 @@ var Presenter = (function () {
 
         this.socket.on('display:message', function (data) {
             presenter.displayQuestion(data);
+            presenter.addMsg(data.msg.msg);
             ctxt.showPanel("result");
         });
 
         this.socket.on('display:score', function (data) {
             presenter.clearMsg();
             presenter.displayQuestion(data);
-            presenter.addMsg(data.msg.msg);
+            data.scoreTab.forEach(function(score) {
+                presenter.addMsg("" + score.name + " : " + score.score);
+            });
             ctxt.showPanel("result");
         });
 
