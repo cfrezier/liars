@@ -32,12 +32,15 @@ var Presenter = (function () {
 
         this.socket.on('display:answer', function (data) {
             var container = document.querySelector("#answerLieContainer");
-            document.querySelector("#answerQuestionText").innerHTML = data.question;
+            document.querySelector("#answerQuestionText").innerHTML = data.question.question;
             while (container.childElementCount > 0) {
                 container.removeChild(container.firstElementChild);
             }
             data.lies.forEach(function (lie) {
-                container.appendChild(document.createTextNode(lie))
+                var text = document.createTextNode(lie);
+                var p = document.createElement("P");
+                p.appendChild(text);
+                container.appendChild(p);
             });
             ctxt.showPanel("answer");
         });

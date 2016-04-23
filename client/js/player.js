@@ -29,7 +29,7 @@ var Player = (function () {
 
         this.socket.on('display:answer', function (data) {
             var container = document.querySelector("#answerLieContainer");
-            document.querySelector("#answerQuestionText").innerHTML = data.question;
+            document.querySelector("#answerQuestionText").innerHTML = data.question.question;
             while (container.childElementCount > 0) {
                 container.removeChild(container.firstElementChild);
             }
@@ -39,13 +39,18 @@ var Player = (function () {
                 })
                 .forEach(function (lie) {
                     var btn = document.createElement("BUTTON");
-                    btn.appendChild(document.createTextNode(lie.text));
+                    btn.appendChild(document.createTextNode(lie));
                     btn.addEventListener("click", function () {
-                        player.socket.emit('play:answer', {"id": this.id, "answer": lie.text});
+                        player.socket.emit('play:answer', {"id": this.id, "answer": lie});
                         this.ctxt.showPanel("wait");
                     });
                     container.appendChild(btn);
                 });
+            ctxt.showPanel("answer");
+        });
+
+        this.socket.on('lie:truth', function (data) {
+            alert("Changez de mensonge, vous avez trouvé la bonne réponse !");
             ctxt.showPanel("answer");
         });
     };

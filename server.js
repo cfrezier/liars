@@ -45,12 +45,17 @@
         socket.on('play:lie', function (data) {
             var player = getPlayerById(data.id);
             if (player != undefined) {
-                player.actualLie = data.lie.toUpperCase();
-                console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
+                if (data.lie === player.game.questions[0].truth) {
+                    socket.emit('lie:truth');
+                    console.log("[Game" + player.game.code + "] Player found truth !");
+                } else {
+                    player.actualLie = data.lie.toUpperCase();
+                    console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
 
-                if (player.game.allLiesEntered()) {
-                    player.game.endLie();
-                    console.log("[Game" + player.game.code + "] All players lied !");
+                    if (player.game.allLiesEntered()) {
+                        player.game.endLie();
+                        console.log("[Game" + player.game.code + "] All players lied !");
+                    }
                 }
             } else {
                 console.log("Wrong lier " + JSON.stringify(data));
