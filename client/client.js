@@ -25,6 +25,9 @@
             },
             lie: function() {
                 executor.lie();
+            },
+            start: function() {
+                executor.start();
             }
         }
     }
