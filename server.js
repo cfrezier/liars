@@ -199,7 +199,7 @@
             /* A menti */
             this.players.forEach(function (player, idx, arr) {
                 var liedTo = "";
-                arr.players.forEach(function (potentialLiedTo) {
+                arr.forEach(function (potentialLiedTo) {
                     if (potentialLiedTo.actualAnswer === player.actualLie) {
                         liedTo += potentialLiedTo.name + " ";
                         player.score += points;
