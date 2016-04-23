@@ -48,6 +48,10 @@ var Presenter = (function () {
             ctxt.showPanel("result");
         });
 
+        this.socket.on('player:lied', function (data) {
+            presenter.addMsg(data.name + " a menti.");
+        });
+
         this.socket.on('display:score', function (data) {
             presenter.clearMsg();
             presenter.displayQuestion(data);

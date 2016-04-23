@@ -55,6 +55,8 @@
                     player.socket.emit('lie:ok');
                     console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
 
+                    player.game.presenterSocket.emit('player:lied', player.name);
+
                     if (player.game.allLiesEntered()) {
                         player.game.endLie();
                         console.log("[Game" + player.game.code + "] All players lied !");
@@ -206,7 +208,7 @@
     Game.prototype.allLiesEntered = function () {
         var allLied = true;
         this.players.forEach(function (player) {
-            allLied = allLied && player.actualLie !== null;
+            allLied = allLied && (player.actualLie !== undefined);
         });
         return allLied;
     };
@@ -214,7 +216,7 @@
     Game.prototype.allAnswersEntered = function () {
         var allAnswers = true;
         this.players.forEach(function (player) {
-            allAnswers = allAnswers && player.actualAnswer !== null;
+            allAnswers = allAnswers && (player.actualAnswer !== undefined);
         });
         return allAnswers;
     };

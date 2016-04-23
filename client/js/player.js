@@ -66,9 +66,11 @@ var Player = (function () {
 
     Player.prototype.lie = function () {
         var lie = document.querySelector("#lie").value;
-        this.actualLie = lie.trim().toUpperCase();
-        this.socket.emit('play:lie', {"id": this.id, "lie": this.actualLie});
-        this.ctxt.showPanel("wait");
+        if (lie.length > 0) {
+            this.actualLie = lie.trim().toUpperCase();
+            this.socket.emit('play:lie', {"id": this.id, "lie": this.actualLie});
+            this.ctxt.showPanel("wait");
+        }
     };
 
     return Player;

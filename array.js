@@ -22,8 +22,9 @@ Array.prototype.unique = function () {
 
 Array.prototype.completeWith = function (lies, howMany) {
     var completed = this;
-    while(completed.length < howMany) {
-        completed.concat(lies.shuffle()[0]).unique();
+    var maxTries = 1000;
+    while(completed.length < howMany && maxTries-- > 0) {
+        completed = completed.concat(lies.shuffle()[0].toUpperCase()).unique();
     }
     return completed;
 };
