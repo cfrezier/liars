@@ -25,7 +25,7 @@
                 socket.emit('wrong:code');
             } else {
                 var player = game.getPlayerByName(data.name);
-                if (player != undefined) {
+                if (player !== undefined) {
                     player.disconnected = false;
                     player.socket = socket;
                 } else {
@@ -44,12 +44,16 @@
 
         socket.on('play:lie', function (data) {
             var player = getPlayerById(data.id);
-            player.actualLie = data.lie.toUpperCase();
-            console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
+            if (player != undefined) {
+                player.actualLie = data.lie.toUpperCase();
+                console.log("[Game" + player.game.code + "] Player " + player.name + " lied [" + player.actualLie + "]");
 
-            if (player.game.allLiesEntered()) {
-                player.game.endLie();
-                console.log("[Game" + player.game.code + "] All players lied !");
+                if (player.game.allLiesEntered()) {
+                    player.game.endLie();
+                    console.log("[Game" + player.game.code + "] All players lied !");
+                }
+            } else {
+                console.log("Wrong lier " + JSON.stringify(data));
             }
         });
 
@@ -67,7 +71,9 @@
         socket.on('disconnect', function () {
             socket.emit('disconnected');
             var player = getPlayerBySocket(socket);
-            player.disconnected = true;
+            if (player != undefined) {
+                player.disconnected = true;
+            }
         });
     });
 
@@ -130,6 +136,7 @@
         var player = new Player(name, socket, this);
         this.players.push(player);
         players.push(player);
+        socket.emit('identify', { id : this.id });
     };
 
     Game.prototype.getPlayerByName = function (name) {
@@ -276,8 +283,6 @@
         this.id = playerIdGenerator++;
         this.game = game;
         this.score = 0;
-
-        socket.emit('identify', this.id);
     }
 
     function getPlayerById(id) {

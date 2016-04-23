@@ -23,7 +23,7 @@ var Presenter = (function () {
 
         this.socket.on('display:lie', function (data) {
             document.querySelector("#questionText").innerHTML = data.question;
-            document.querySelector("lieResponse").style.display = 'none';
+            document.querySelector("#lieResponse").style.display = 'none';
             ctxt.showPanel("lie");
         });
 
