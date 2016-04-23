@@ -44,11 +44,16 @@
         app = express(),
         port = HTTP_PORT;
 
-    app.use(express.static(__dirname + '/client'));
-    app.get('/', function(req, res){
-        res.sendfile(__dirname + '/client/index.html');
-    });
-    app.listen(port);
+    try {
+        app.use(express.static(__dirname + '/client'));
+        app.get('/', function (req, res) {
+            res.sendfile(__dirname + '/client/index.html');
+        });
+        app.listen(port);
+        console.log("Ready & listening to requests.")
+    } catch (e) {
+        console.log("Error in server: " + e);
+    }
 
     function Game(socket) {
         this.code = this.generateCode();
@@ -248,4 +253,4 @@
         return this;
     }
 
-})(require('socket.io').listen(8000), 5000, 30000, 1000, 80);
+})(require('socket.io').listen(8001), 5000, 30000, 1000, 8000);
