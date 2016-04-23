@@ -111,16 +111,13 @@
         this.questions = randomQuestions(NUMBER_QUESTION);
     }
 
+    var fs = require('fs');
+
     function randomQuestions(nb) {
-        return [
-            {question: "Ceci est une 1ere phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
-            {question: "Ceci est une 2eme phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
-            {question: "Ceci est une 3eme phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
-            {question: "Ceci est une 4eme phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
-            {question: "Ceci est une 5eme phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
-            {question: "Ceci est une 6eme phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]},
-            {question: "Ceci est une 7eme phrase à remplir par un ______.", truth: "blanc", lies: ["grrrr", "méchant"]}
-        ];
+        var buffer = fs.readFileSync('./questions.json', "utf8");
+        var possibleQuestions = JSON.parse(buffer);
+        var questionsSelected = possibleQuestions.shuffle().splice(0, nb);
+        return questionsSelected;
     }
 
     function getGameByCode(code) {
