@@ -3,6 +3,8 @@
     var players = [];
     var playerIdGenerator = 0;
 
+    require('./array.js');
+
     try {
         var io = require('socket.io').listen(8001);
         console.log("WSServer lancé");
@@ -163,7 +165,7 @@
         });
         var game = this;
         if (this.questions.length > 0) {
-            console.log("[Game" + this.code + "] Question n° " + ( NUMBER_QUESTION - this.questions.length) + "started");
+            console.log("[Game" + this.code + "] Question n°" + ( NUMBER_QUESTION - this.questions.length) + " started");
             this.broadcast('display:lie', this.questions[0]);
             setTimeout(function () {
                 game.endLie();
@@ -185,7 +187,7 @@
                 question: this.questions[0],
                 lies: this.players.map(function (player) {
                     return player.actualLie;
-                }).concat(this.questions[0].truth.toUpperCase()).shuffle()
+                }).concat(this.questions[0].truth.toUpperCase()).unique().completeWith(this.questions[0].lies, 4).shuffle()
             });
 
             setTimeout(function () {
@@ -311,18 +313,6 @@
         return players.filter(function (player) {
             return player.socket === socket;
         })[0];
-    }
-
-    Array.prototype.shuffle = function () {
-        var i = this.length, j, temp;
-        if (i == 0) return this;
-        while (--i) {
-            j = Math.floor(Math.random() * ( i + 1 ));
-            temp = this[i];
-            this[i] = this[j];
-            this[j] = temp;
-        }
-        return this;
     }
 
 })(5000, 30000, 1000, 8000, 7);
