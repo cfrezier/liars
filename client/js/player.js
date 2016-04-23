@@ -5,6 +5,7 @@ var Player = (function () {
         this.code = code;
         this.id = -1;
         this.ctxt = null;
+        this.actualLie = undefined;
     };
 
     Player.prototype.execute = function (ctxt) {
@@ -25,6 +26,7 @@ var Player = (function () {
         this.socket.on('display:lie', function (data) {
             document.querySelector("#questionText").innerHTML = data.question;
             document.querySelector("#lie").value = "";
+            player.actualLie = undefined;
             ctxt.showPanel("lie");
         });
 
@@ -37,7 +39,7 @@ var Player = (function () {
             }
             data.lies
                 .filter(function (lie) {
-                    return lie.id != player.id;
+                    return lie !== player.actualLie;
                 })
                 .forEach(function (lie) {
                     var btn = document.createElement("BUTTON");
@@ -52,6 +54,7 @@ var Player = (function () {
         });
 
         this.socket.on('lie:truth', function (data) {
+            player.actualLie = undefined;
             document.querySelector("#warningTruth").style.display = "block";
             ctxt.showPanel("lie");
         });
@@ -63,7 +66,8 @@ var Player = (function () {
 
     Player.prototype.lie = function () {
         var lie = document.querySelector("#lie").value;
-        this.socket.emit('play:lie', {"id": this.id, "lie": lie});
+        this.actualLie = lie.trim().toUpperCase();
+        this.socket.emit('play:lie', {"id": this.id, "lie": this.actualLie});
         this.ctxt.showPanel("wait");
     };
 

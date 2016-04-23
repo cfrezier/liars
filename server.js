@@ -249,7 +249,7 @@
             });
 
             /* A trouvé la vérité */
-            this.resultMessages.push({msg: "La réponse " + game.questions[0].truth, time: SHORT_DISPLAY_TIMEOUT});
+            this.resultMessages.push({msg: "La réponse " + game.questions[0].truth.toUpperCase(), time: SHORT_DISPLAY_TIMEOUT});
             this.resultMessages.push({msg: "Etait la VERITE", time: SHORT_DISPLAY_TIMEOUT});
             var haveFoundTruth = "";
             this.players.forEach(function (player, idx, arr) {
