@@ -12,6 +12,7 @@ var Player = (function () {
         player.ctxt = ctxt;
 
         this.socket.emit('iam:player', {"name": this.name, "code": this.code});
+        ctxt.showPanel("wait");
 
         this.socket.on('identify', function (data) {
             player.id = data.id;

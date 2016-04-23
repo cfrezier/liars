@@ -24,10 +24,17 @@
             if (game == undefined) {
                 socket.emit('wrong:code');
             } else {
-                game.createPlayer(data.name, socket);
-                game.presenterSocket.emit('display:player', {"name": data.name});
-                console.log("[Game" + game.code + "] New Player: " + data.name);
+                var player = game.getPlayerByName(data.name);
+                if (player != undefined) {
+                    player.disconnected = false;
+                    player.socket = socket;
+                } else {
+                    game.createPlayer(data.name, socket);
+                    game.presenterSocket.emit('display:player', {"name": data.name});
+                    console.log("[Game" + game.code + "] New Player: " + data.name);
+                }
             }
+
         });
 
         socket.on('start', function (data) {
@@ -55,6 +62,12 @@
                 player.game.endAnswer();
                 console.log("[Game" + player.game.code + "] All players Answered !");
             }
+        });
+
+        socket.on('disconnect', function () {
+            socket.emit('disconnected');
+            var player = getPlayerBySocket(socket);
+            player.disconnected = true;
         });
     });
 
@@ -117,6 +130,12 @@
         var player = new Player(name, socket, this);
         this.players.push(player);
         players.push(player);
+    };
+
+    Game.prototype.getPlayerByName = function (name) {
+        return this.players.filter(function (player) {
+            return name === player.name;
+        })[0];
     };
 
     Game.prototype.start = function () {
@@ -264,6 +283,12 @@
     function getPlayerById(id) {
         return players.filter(function (player) {
             return player.id === id;
+        })[0];
+    }
+
+    function getPlayerBySocket(socket) {
+        return players.filter(function (player) {
+            return player.socket === socket;
         })[0];
     }
 
