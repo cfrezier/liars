@@ -63,7 +63,7 @@ var Presenter = (function () {
 
 
         this.socket.on('end', function (data) {
-            ctxt.showPanel("start");
+            ctxt.showPanel("code");
         });
 
     };

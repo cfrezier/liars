@@ -112,7 +112,6 @@
     }
 
     var fs = require('fs');
-
     function randomQuestions(nb) {
         var buffer = fs.readFileSync('./questions.json', "utf8");
         var possibleQuestions = JSON.parse(buffer);
@@ -171,6 +170,7 @@
         } else {
             console.log("[Game" + this.code + "] Game terminated !");
             this.end = Date.now();
+            this.questions = randomQuestions(NUMBER_QUESTION);
             this.broadcast('end');
         }
         return this;
@@ -341,4 +341,4 @@
         })[0];
     }
 
-})(5000, 30000, 1000, 8000, 7);
+})(5000, 30000, 1000, 8000, 1);
