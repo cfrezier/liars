@@ -135,7 +135,8 @@
                 })
                 .map(function (obj) {
                     return obj.truth;
-                });
+                })
+                .unique();
         }
         return lies;
     }
