@@ -128,8 +128,14 @@
 
     function randomLies() {
         if (lies === undefined) {
-            var buffer = fs.readFileSync('./lies.json', "utf8");
-            lies = JSON.parse(buffer);
+            var buffer = fs.readFileSync('./questions.json', "utf8");
+            lies = JSON.parse(buffer)
+                .filter(function (obj) {
+                    return obj !== undefined;
+                })
+                .map(function (obj) {
+                    return obj.truth;
+                });
         }
         return lies;
     }
