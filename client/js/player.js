@@ -1,8 +1,8 @@
 var Player = (function () {
     var Player = function (socket, name, code) {
         this.socket = socket;
-        this.name = name;
-        this.code = code;
+        this.name = name.toUpperCase();
+        this.code = code.toUpperCase();
         this.id = -1;
         this.ctxt = null;
         this.actualLie = undefined;
