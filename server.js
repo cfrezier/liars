@@ -2,6 +2,7 @@
     var games = [];
     var players = [];
     var playerIdGenerator = 0;
+    var lies = undefined;
 
     require('./array.js');
 
@@ -49,7 +50,7 @@
                     player.socket = socket;
                 } else {
                     game.createPlayer(data.name, socket);
-                    game.presenterSocket.emit('display:player', {"name": data.name, "id" : getPlayerBySocket(socket).id });
+                    game.presenterSocket.emit('display:player', {"name": data.name, "id": getPlayerBySocket(socket).id});
                     console.log("[Game" + game.code + "] New Player: " + data.name);
                 }
             }
@@ -118,10 +119,19 @@
     }
 
     var fs = require('fs');
+
     function randomQuestions(nb) {
         var buffer = fs.readFileSync('./questions.json', "utf8");
         var possibleQuestions = JSON.parse(buffer);
         return possibleQuestions.shuffle().splice(0, nb);
+    }
+
+    function randomLies() {
+        if (lies === undefined) {
+            var buffer = fs.readFileSync('./lies.json', "utf8");
+            lies = JSON.parse(buffer);
+        }
+        return lies;
     }
 
     function getGameByCode(code) {
@@ -191,7 +201,7 @@
 
             this.broadcast("display:answer", {
                 question: this.questions[0],
-                lies: this.players
+                lies    : this.players
                     .filter(function (player) {
                         return player.actualLie != undefined && player.actualLie != null;
                     })
@@ -200,7 +210,7 @@
                     })
                     .concat(this.questions[0].truth.toUpperCase())
                     .unique()
-                    .completeWith(this.questions[0].lies, this.players.length + 1 > 4 ? this.players.length + 1 : 4)
+                    .completeWith(randomLies(), this.players.length + 1 > 4 ? this.players.length + 1 : 4)
                     .shuffle()
             });
 
