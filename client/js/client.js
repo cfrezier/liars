@@ -6,7 +6,7 @@ var __prep = (function (Presenter, Player, PORT) {
 
         return {
             connect: function () {
-                socket = io.connect("http://192.168.1.16:" + PORT);
+                socket = io();
             },
             iAm: function (what) {
                 if (what === 'presenter') {

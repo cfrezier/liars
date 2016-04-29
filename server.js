@@ -5,12 +5,29 @@
 
     require('./array.js');
 
+    var express = require('express');
+    var app = express();
+    var server = null;
+
     try {
-        var io = require('socket.io').listen(8001);
+        app.use(express.static(__dirname + '/client'));
+        app.get('/', function (req, res) {
+            res.sendfile(__dirname + '/client/index.html');
+        });
+        server = app.listen(HTTP_PORT);
+        console.log("Ready & listening to requests. Ctrl-C to stop.")
+    } catch (e) {
+        console.log("Error in server: " + e);
+    }
+
+    try {
+        var io = require('socket.io').listen(server);
         console.log("WSServer lancé");
     } catch (e) {
         console.log("Problème WSServer" + e);
     }
+
+    console.log("Listening to port: " + HTTP_PORT);
 
     io.sockets.on('connection', function (socket) {
         socket.on('iam:presenter', function (data) {
@@ -92,19 +109,6 @@
             }
         });
     });
-
-    var express = require('express'), app = express();
-
-    try {
-        app.use(express.static(__dirname + '/client'));
-        app.get('/', function (req, res) {
-            res.sendfile(__dirname + '/client/index.html');
-        });
-        app.listen(HTTP_PORT);
-        console.log("Ready & listening to requests. Ctrl-C to stop.")
-    } catch (e) {
-        console.log("Error in server: " + e);
-    }
 
     function Game(socket) {
         this.code = this.generateCode();
