@@ -299,10 +299,14 @@
                 });
 
             /* A menti */
-            this.players.forEach(function (player, idx, arr) {
+            this.players
+                .filter(function(player){
+                    return player.actualLie !== undefined;
+                })
+                .forEach(function (player, idx, arr) {
                 var liedTo = "";
                 arr.forEach(function (potentialLiedTo) {
-                    if (potentialLiedTo.actualAnswer === player.actualLie) {
+                    if (potentialLiedTo.actualAnswer !== undefined && potentialLiedTo.actualAnswer === player.actualLie) {
                         liedTo += potentialLiedTo.name + " ";
                         player.score += points;
                     }
