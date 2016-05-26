@@ -256,6 +256,7 @@
         if (this.state == "answering") {
             console.log("[Game" + game.code + "] Starting displaying results");
             this.state = "calculating";
+            this.broadcast('results');
             this.presenterSocket.emit("clear:message", {});
             this.resultMessages = [];
 
