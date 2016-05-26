@@ -53,6 +53,10 @@ var Player = (function () {
             ctxt.showPanel("answer");
         });
 
+        this.socket.on('results', function (data) {
+            ctxt.showPanel("wait");
+        });
+
         this.socket.on('lie:truth', function (data) {
             player.actualLie = undefined;
             document.querySelector("#warningTruth").style.display = "block";
